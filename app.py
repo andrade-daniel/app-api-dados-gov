@@ -51,7 +51,7 @@ img = Image.open('img/dados-gov-logo.png')
 st.sidebar.image(img,
 use_column_width=False, width=200)
 
-st.title(fix_encoding('API demos dados.gov.pt'))
+st.title('API demos dados.gov.pt')
 
 # create cache and data folders
 
