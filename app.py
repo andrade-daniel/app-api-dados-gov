@@ -243,7 +243,7 @@ if st.sidebar.checkbox("Exemplo 5: Correr comandos curl num terminal"):
 if st.sidebar.checkbox("Exemplo 6: Olhar para os dados"):
     st.subheader("Escolher um dataset e uma visualização")
 
-    uploaded_file = st.file_uploader(label="Escolha um ficheiro json", type="json")
+    uploaded_file = st.file_uploader(label="Escolha um ficheiro")
     
     if uploaded_file is not None:
         data = pd.read_json(uploaded_file)
@@ -263,10 +263,6 @@ if st.sidebar.checkbox("Exemplo 6: Olhar para os dados"):
 
         # select type of viz
 
-
-        # new_data_df.total = new_data_df.total.astype('int')
-        # new_data_df = new_data_df.loc[new_data_df['lojas'] != 'Total Ano', :]
-
         st.subheader("Escolher um tipo de visualização")
 
         viz_types = ['Gráfico de barras', 'Gráfico de dispersão']
@@ -276,7 +272,7 @@ if st.sidebar.checkbox("Exemplo 6: Olhar para os dados"):
         sel_var1 = st.selectbox(label="Selecione uma variável", options=new_data_df.columns, \
         index=0, key='sel_var1')
 
-        sel_var2 = st.selectbox(label="Selecione uma variável", options=new_data_df.columns, \
+        sel_var2 = st.selectbox(label="Selecione uma segunda variável", options=new_data_df.columns, \
         index=0, key='sel_var2')
         
         # bokeh plotting
