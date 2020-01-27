@@ -12,6 +12,8 @@ import requests
 from urllib.parse import unquote
 import unidecode
 import warnings
+from bokeh.plotting import figure
+from math import pi
 
 warnings.filterwarnings("ignore")
 
@@ -232,3 +234,70 @@ if st.sidebar.checkbox("Exemplo 5: Correr comandos curl num terminal"):
             output_file = json.load(open(data_dir + "/out.json"))
             st.json(output_file)
             # st.table(pd.DataFrame(output_file['data']))
+
+
+### VISUALIZATION
+
+## Visualize certain features of downloaded data
+
+if st.sidebar.checkbox("Exemplo 6: Olhar para os dados"):
+    st.subheader("Escolher um dataset e uma visualização")
+
+    uploaded_file = st.file_uploader(label="Escolha um ficheiro json", type="json")
+    
+    if uploaded_file is not None:
+        data = pd.read_json(uploaded_file)
+        # data = json.dumps(json.loads(str(uploaded_file)))
+        st.write(data)
+        st.table(pd.DataFrame(data))
+        # st.text(pd.DataFrame(data['data']).columns)
+
+        data_df = pd.DataFrame(data)
+        new_data_df = [pd.DataFrame(elem, index=[0]) for elem in data_df['d']]
+        new_data_df = pd.concat(new_data_df)
+        
+        joblib.dump(new_data_df, cache_dir + '/new_data_df.pickle')
+
+        st.dataframe(new_data_df)
+
+
+        # select type of viz
+
+
+        # new_data_df.total = new_data_df.total.astype('int')
+        # new_data_df = new_data_df.loc[new_data_df['lojas'] != 'Total Ano', :]
+
+        st.subheader("Escolher um tipo de visualização")
+
+        viz_types = ['Gráfico de barras', 'Gráfico de dispersão']
+        sel_viz = st.selectbox(label="Selecione um tipo de visualização", options=viz_types, \
+        index=0)
+
+        sel_var1 = st.selectbox(label="Selecione uma variável", options=new_data_df.columns, \
+        index=0, key='sel_var1')
+
+        sel_var2 = st.selectbox(label="Selecione uma variável", options=new_data_df.columns, \
+        index=0, key='sel_var2')
+        
+        # bokeh plotting
+
+        TOOLS = "hover,crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
+        
+        if sel_var1 and sel_var2:
+            
+            p = figure(title=sel_viz, x_range=new_data_df[sel_var1], tools=TOOLS)
+            
+            if sel_viz == 'Gráfico de barras':
+                p.vbar(x=new_data_df[sel_var1], top=new_data_df[sel_var2], legend='Trend', width=0.9)
+                
+            else:
+                p.scatter(x=new_data_df[sel_var1], y=new_data_df[sel_var2])
+                
+            p.xaxis.major_label_orientation = pi/4   # standard styling code
+            st.bokeh_chart(p)
+
+
+
+
+
+    
