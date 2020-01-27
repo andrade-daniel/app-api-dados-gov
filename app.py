@@ -245,20 +245,36 @@ if st.sidebar.checkbox("Exemplo 6: Olhar para os dados"):
 
     uploaded_file = st.file_uploader(label="Escolha um ficheiro")
     
+    file_types = ['json', 'csv', 'excel']
+    sel_file_type = st.selectbox(label="Selecione o formato do ficheiro", options=file_types, \
+        index=0)
+
     if uploaded_file is not None:
-        data = pd.read_json(uploaded_file)
-        # data = json.dumps(json.loads(str(uploaded_file)))
+        if st.button("Clique para confirmar"):
+            if sel_file_type == 'json':
+                data = pd.read_json(uploaded_file)
+            elif sel_file_type == 'csv':
+                data = pd.read_csv(uploaded_file)
+            else:
+                data = pd.read_excel(uploaded_file)
+        
+            joblib.dump(data, cache_dir + '/data.pickle')
+        
+        data = joblib.load(cache_dir + '/data.pickle')
+
         st.write(data)
         st.table(pd.DataFrame(data))
         # st.text(pd.DataFrame(data['data']).columns)
 
         data_df = pd.DataFrame(data)
-        new_data_df = [pd.DataFrame(elem, index=[0]) for elem in data_df['d']]
-        new_data_df = pd.concat(new_data_df)
-        
-        joblib.dump(new_data_df, cache_dir + '/new_data_df.pickle')
 
-        st.dataframe(new_data_df)
+        if sel_file_type == 'json':
+            data_df = [pd.DataFrame(elem, index=[0]) for elem in data_df['d']]
+            data_df = pd.concat(data_df)
+        
+        joblib.dump(data_df, cache_dir + '/data_df.pickle')
+
+        st.dataframe(data_df)
 
 
         # select type of viz
@@ -269,10 +285,10 @@ if st.sidebar.checkbox("Exemplo 6: Olhar para os dados"):
         sel_viz = st.selectbox(label="Selecione um tipo de visualização", options=viz_types, \
         index=0)
 
-        sel_var1 = st.selectbox(label="Selecione uma variável", options=new_data_df.columns, \
+        sel_var1 = st.selectbox(label="Selecione uma variável", options=data_df.columns, \
         index=0, key='sel_var1')
 
-        sel_var2 = st.selectbox(label="Selecione uma segunda variável", options=new_data_df.columns, \
+        sel_var2 = st.selectbox(label="Selecione uma segunda variável", options=data_df.columns, \
         index=0, key='sel_var2')
         
         # bokeh plotting
@@ -281,13 +297,13 @@ if st.sidebar.checkbox("Exemplo 6: Olhar para os dados"):
         
         if sel_var1 and sel_var2:
             
-            p = figure(title=sel_viz, x_range=new_data_df[sel_var1], tools=TOOLS)
+            p = figure(title=sel_viz, x_range=data_df[sel_var1], tools=TOOLS)
             
             if sel_viz == 'Gráfico de barras':
-                p.vbar(x=new_data_df[sel_var1], top=new_data_df[sel_var2], legend='Trend', width=0.9)
+                p.vbar(x=data_df[sel_var1], top=data_df[sel_var2], legend='Trend', width=0.9)
                 
             else:
-                p.scatter(x=new_data_df[sel_var1], y=new_data_df[sel_var2])
+                p.scatter(x=data_df[sel_var1], y=data_df[sel_var2])
                 
             p.xaxis.major_label_orientation = pi/4   # standard styling code
             st.bokeh_chart(p)
