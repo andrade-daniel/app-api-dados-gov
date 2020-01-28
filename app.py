@@ -77,8 +77,6 @@ if st.sidebar.checkbox("Exemplo 1: Dados de Utilização do Portal"):
 
     response_site = session.get("https://dados.gov.pt/api/1/site/")
     
-    assert(response_site.status_code == '200', 'Erro no início de sessão!')
-    
     # response_site.json()
     # response_site.json().get("metrics")
 
@@ -92,8 +90,6 @@ if st.sidebar.checkbox("Exemplo 2: Formatos de Ficheiros"):
     st.subheader("Verificar formatos de ficheiros aceites")
     response_formats = session.get("https://dados.gov.pt/api/1/datasets/extensions/")
 
-    assert(response_formats.status_code == '200', 'Erro no início de sessão!')
-
     st.text(st.json(response_formats.json()))
 
 ### GET ORGANIZATIONS
@@ -103,8 +99,6 @@ if st.sidebar.checkbox("Exemplo 3: Organizações"):
     st.subheader("Obter Organizações")
 
     response_org = session.get("https://dados.gov.pt/api/1/organizations/")
-
-    assert(response_org.status_code == '200', 'Erro no início de sessão!')
 
     datasets_org = response_org.json().get("data")
     next_page = response_org.json().get("next_page")
@@ -143,8 +137,7 @@ if st.sidebar.checkbox("Exemplo 4: Obter um ficheiro de uma organização"):
         response_org_ds = session.get(
         f"https://dados.gov.pt/api/1/organizations/{sel_org}/datasets/"
     )
-        assert(response_org_ds.status_code == '200', 'Erro no início de sessão!')
-
+    
         datasets_org_ds = response_org_ds.json().get("data")
         next_page = response_org_ds.json().get("next_page")
         while next_page:
