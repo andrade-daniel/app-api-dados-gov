@@ -66,9 +66,38 @@ else:
 
 # initial examples 
 
+### RUN COMMANDS
+
+## Simulate command line
+
+if st.sidebar.checkbox("Exemplo 1: Correr comandos curl num terminal"):
+    
+    st.subheader("Correr comandos curl")
+
+    commands = st.text_area("Insira aqui o comando pretendido...")
+
+    if st.button("Clique para correr"):
+        if commands:
+            # removing certain characters that lead to errors (e.g. replacing "%20" by "-")
+            commands = unquote(commands)
+            commands = commands.split("https")[:-1][0] + "https" + '-'.join(commands.split("https")[-1].split(" "))
+            
+            commands = commands.replace("'", '"')
+            commands = unidecode.unidecode(commands)
+            joblib.dump(commands, cache_dir + '/commands.pickle')
+
+            commands_to_file = commands + ' > ' + data_dir + '/out.json'
+            os.system(commands_to_file)
+            st.success(f'Pedido efectuado. \nFicheiro guardado na pasta: {data_dir}.')
+
+            output_file = json.load(open(data_dir + "/out.json"))
+            st.json(output_file)
+            # st.table(pd.DataFrame(output_file['data']))
+
+
 ### SITE
 
-if st.sidebar.checkbox("Exemplo 1: Dados de Utilização do Portal"):
+if st.sidebar.checkbox("Exemplo 2: Dados de Utilização do Portal"):
     
     st.subheader("Dados de utilização do Portal")
 
@@ -82,7 +111,7 @@ if st.sidebar.checkbox("Exemplo 1: Dados de Utilização do Portal"):
 
 ### FILE FORMATS ACCEPTED FOR DATASETS
 
-if st.sidebar.checkbox("Exemplo 2: Formatos de Ficheiros"):
+if st.sidebar.checkbox("Exemplo 3: Formatos de Ficheiros"):
     
     st.subheader("Verificar formatos de ficheiros aceites")
     response_formats = session.get("https://dados.gov.pt/api/1/datasets/extensions/")
@@ -91,7 +120,7 @@ if st.sidebar.checkbox("Exemplo 2: Formatos de Ficheiros"):
 
 ### GET ORGANIZATIONS
 
-if st.sidebar.checkbox("Exemplo 3: Organizações"):
+if st.sidebar.checkbox("Exemplo 4: Organizações"):
     
     st.subheader("Obter Organizações")
 
@@ -122,10 +151,10 @@ if st.sidebar.checkbox("Exemplo 3: Organizações"):
 
 ### GET DATASETS FROM AN ORGANIZATION
 
-if st.sidebar.checkbox("Exemplo 4: Obter um ficheiro de uma organização"):
+if st.sidebar.checkbox("Exemplo 5: Obter um ficheiro de uma organização"):
     
     st.subheader("Obter um ficheiro de uma organização")
-
+    
     df_org = joblib.load(cache_dir + '/df_org.pickle')
     sel_org = st.selectbox(label="Selecione Organização", options=np.unique(df_org['name']), \
         index=3)
@@ -195,35 +224,6 @@ if st.sidebar.checkbox("Exemplo 4: Obter um ficheiro de uma organização"):
                 open(sel_org_path, "wb").write(myfile.content)
             
             st.success(f'Documento transferido! \nGuardado na pasta: {data_dir}/{sel_org}.')
-
-
-### RUN COMMANDS
-
-## Simulate command line
-
-if st.sidebar.checkbox("Exemplo 5: Correr comandos curl num terminal"):
-    
-    st.subheader("Correr comandos curl")
-
-    commands = st.text_area("Insira aqui o comando pretendido...")
-
-    if st.button("Clique para correr"):
-        if commands:
-            # removing certain characters that lead to errors (e.g. replacing "%20" by "-")
-            commands = unquote(commands)
-            commands = commands.split("https")[:-1][0] + "https" + '-'.join(commands.split("https")[-1].split(" "))
-            
-            commands = commands.replace("'", '"')
-            commands = unidecode.unidecode(commands)
-            joblib.dump(commands, cache_dir + '/commands.pickle')
-
-            commands_to_file = commands + ' > ' + data_dir + '/out.json'
-            os.system(commands_to_file)
-            st.success(f'Pedido efectuado. \nFicheiro guardado na pasta: {data_dir}.')
-
-            output_file = json.load(open(data_dir + "/out.json"))
-            st.json(output_file)
-            # st.table(pd.DataFrame(output_file['data']))
 
 
 ### VISUALIZATION
