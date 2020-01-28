@@ -51,17 +51,14 @@ if st.sidebar.checkbox("Inserir API KEY"):
     cache_file = st.text_area(add_api_key("Insira aqui a sua API KEY..."))
 
     joblib.dump(cache_file, cache_dir + '/tmp.pickle')
-
+    
     # st.success('API registada temporariamente')
-
-cache_file = joblib.load(cache_dir + '/tmp.pickle')
-
-# create session
-
-session = requests.Session()
-
-# update_session(cache_file)
-session.headers.update({"X-API-KEY": cache_file})
+    
+    # create session
+    session = requests.Session()
+    session.headers.update({"X-API-KEY": cache_file})
+else:
+    session = requests.Session()
 
 #############
 # API TESTS #
