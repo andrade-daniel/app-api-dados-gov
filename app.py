@@ -144,7 +144,12 @@ if st.sidebar.checkbox("Exemplo 4: Organizações"):
     df_org.index = range(1, len(df_org)+1)
 
     # st.table(df_org[["acronym", "name", "description"]])
-    st.dataframe(df_org, width=2000, height=500)
+
+    cols = ['slug', 'metrics']
+    st_ms = st.multiselect("Colunas", df_org.columns.tolist(), default=cols)
+
+    if st_ms:
+        st.dataframe(df_org[st_ms], width=2000, height=500)
 
     joblib.dump(df_org, cache_dir + '/df_org.pickle')
 
