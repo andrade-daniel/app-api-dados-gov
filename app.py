@@ -106,6 +106,7 @@ if st.sidebar.checkbox("Exemplo 2: Dados de Utilização do Portal"):
     # response_site.json()
     # response_site.json().get("metrics")
 
+    st.json(response_site.json().get("metrics"))
     st.table(pd.DataFrame.from_dict(response_site.json().get("metrics"), orient="index").T)
 
 
